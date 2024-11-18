@@ -1,0 +1,61 @@
+services:
+  api_gateway:
+    build: ../dinner_managment_api_gateway
+    stdin_open: true
+    tty: true
+    volumes:
+      - ../dinner_managment_api_gateway/src:/src
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    ports: 
+     - 8000:8000
+    command: /bin/sh -c "python main.py"
+
+  business_logic:
+    build: ../dinner_managment_business_logic
+    stdin_open: true
+    tty: true
+    volumes:
+      - ../dinner_managment_business_logic/src:/src
+    ports:
+     - 8001:8001
+    command: /bin/sh -c "python main.py"
+
+  database_gateway:
+    build: ../dinner_managment_database_gateway
+    stdin_open: true
+    tty: true
+    volumes:
+      - ../dinner_managment_database_gateway/src:/src
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/dinner_managment_db
+      - MONGODB_URL=mongodb://mongo:27017/
+      - DATABASE_NAME=justice_db
+    depends_on:
+      - mongo 
+    ports:
+     - 8002:8002
+    command: /bin/sh -c "python main.py"
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+    attach: false
+
+# ------------------------------------------
+# SIMULATORS -------------------------------
+# ------------------------------------------
+  # client_simulator:
+  #   build: ../dinner_managment_client_simulator
+  #   stdin_open: true
+  #   tty: true
+  #   volumes:
+  #     - ../dinner_managment_client_simulator/src:/src
+# ------------------------------------------
+# ------------------------------------------
+# ------------------------------------------
+
+volumes:
+  mongodata:
