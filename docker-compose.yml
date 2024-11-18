@@ -6,6 +6,10 @@ services:
     volumes:
       - ../dinner_managment_api_gateway/src:/src
       - /tmp/.X11-unix:/tmp/.X11-unix
+    environment:
+      - LOCAL_HOST=0.0.0.0
+      - ZMQ_SERVER_HOST=0.0.0.0
+      - BUSINESS_LOGIC_HOST=business_logic
     ports: 
      - 8000:8000
     command: /bin/sh -c "python main.py"
