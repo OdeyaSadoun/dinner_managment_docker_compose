@@ -8,8 +8,10 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix
     environment:
       - LOCAL_HOST=0.0.0.0
+      - HTTP_PORT=8000
       - ZMQ_SERVER_HOST=0.0.0.0
       - BUSINESS_LOGIC_HOST=business_logic
+      - BUSINESS_LOGIC_PORT=8001
     ports: 
      - 8000:8000
     command: /bin/sh -c "python main.py"
