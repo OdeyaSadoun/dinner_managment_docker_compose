@@ -22,6 +22,11 @@ services:
     tty: true
     volumes:
       - ../dinner_managment_business_logic/src:/src
+    environment:
+      - LOCAL_HOST=0.0.0.0
+      - DATABASE_GATEWAY_HOST=database_gateway
+      - LOCAL_PORT=8001
+      - DATABASE_GATEWAY_PORT=8002
     ports:
      - 8001:8001
     command: /bin/sh -c "python main.py"
@@ -36,6 +41,9 @@ services:
       - MONGO_URI=mongodb://mongo:27017/dinner_managment_db
       - MONGODB_URL=mongodb://mongo:27017/
       - DATABASE_NAME=justice_db
+      - JWT_SECRET=secret_key
+      - JWT_ALGORITHM=HS256
+      - JWT_EXP_DELTA_SECONDS=3600 
     depends_on:
       - mongo 
     ports:
