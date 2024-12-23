@@ -7,13 +7,13 @@ services:
       - ../dinner_managment_api_gateway/src:/src
       - /tmp/.X11-unix:/tmp/.X11-unix
     environment:
-      - LOCAL_HOST=0.0.0.0
-      - HTTP_PORT=8000
-      - ZMQ_SERVER_HOST=0.0.0.0
+      - LOCAL_HOST=${LOCAL_HOST}
+      - HTTP_PORT=${API_GATEWAY_PORT}
+      - ZMQ_SERVER_HOST=${LOCAL_HOST}
       - BUSINESS_LOGIC_HOST=business_logic
-      - BUSINESS_LOGIC_PORT=8001
+      - BUSINESS_LOGIC_PORT=${BUSINESS_LOGIC_PORT}
     ports: 
-     - 8000:8000
+      - "${API_GATEWAY_PORT}:${API_GATEWAY_PORT}"
     command: /bin/sh -c "python main.py"
 
   business_logic:
@@ -23,12 +23,12 @@ services:
     volumes:
       - ../dinner_managment_business_logic/src:/src
     environment:
-      - LOCAL_HOST=0.0.0.0
+      - LOCAL_HOST=${LOCAL_HOST}
       - DATABASE_GATEWAY_HOST=database_gateway
-      - LOCAL_PORT=8001
-      - DATABASE_GATEWAY_PORT=8002
+      - LOCAL_PORT=${BUSINESS_LOGIC_PORT}
+      - DATABASE_GATEWAY_PORT=${DATABASE_GATEWAY_PORT}
     ports:
-     - 8001:8001
+      - "${BUSINESS_LOGIC_PORT}:${BUSINESS_LOGIC_PORT}"
     command: /bin/sh -c "python main.py"
 
   database_gateway:
@@ -38,18 +38,18 @@ services:
     volumes:
       - ../dinner_managment_database_gateway/src:/src
     environment:
-      - MONGO_URI=mongodb://mongo:27017/dinner_managment_db
+      - MONGO_URI=mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_CLUSTER}/${DATABASE_NAME}?retryWrites=true&w=majority
       - MONGODB_URL=mongodb://mongo:27017/
-      - DATABASE_NAME=justice_db
-      - JWT_SECRET=secret_key
-      - JWT_ALGORITHM=HS256
-      - JWT_EXP_DELTA_SECONDS=3600 
-      - LOCAL_HOST=0.0.0.0
-      - PORT=8002
+      - DATABASE_NAME=${DATABASE_NAME}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ALGORITHM=${JWT_ALGORITHM}
+      - JWT_EXP_DELTA_SECONDS=${JWT_EXP_DELTA_SECONDS}
+      - LOCAL_HOST=${LOCAL_HOST}
+      - PORT=${DATABASE_GATEWAY_PORT}
     depends_on:
       - mongo 
     ports:
-     - 8002:8002
+      - "${DATABASE_GATEWAY_PORT}:${DATABASE_GATEWAY_PORT}"
     command: /bin/sh -c "python main.py"
 
   mongo:
@@ -58,20 +58,6 @@ services:
       - "27017:27017"
     volumes:
       - mongodata:/data/db
-    attach: false
-
-# ------------------------------------------
-# SIMULATORS -------------------------------
-# ------------------------------------------
-  # client_simulator:
-  #   build: ../dinner_managment_client_simulator
-  #   stdin_open: true
-  #   tty: true
-  #   volumes:
-  #     - ../dinner_managment_client_simulator/src:/src
-# ------------------------------------------
-# ------------------------------------------
-# ------------------------------------------
 
 volumes:
   mongodata:
