@@ -12,6 +12,9 @@ services:
       - ZMQ_SERVER_HOST=${LOCAL_HOST}
       - BUSINESS_LOGIC_HOST=business_logic
       - BUSINESS_LOGIC_PORT=${BUSINESS_LOGIC_PORT}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ALGORITHM=${JWT_ALGORITHM}
+      - JWT_EXP_DELTA_SECONDS=${JWT_EXP_DELTA_SECONDS}
     ports: 
       - "${API_GATEWAY_PORT}:${API_GATEWAY_PORT}"
     command: /bin/sh -c "python main.py"
