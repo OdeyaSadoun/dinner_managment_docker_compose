@@ -3,6 +3,7 @@ services:
     build: ../dinner_managment_api_gateway
     stdin_open: true
     tty: true
+    privileged: true
     volumes:
       - ../dinner_managment_api_gateway/src:/src
       - /tmp/.X11-unix:/tmp/.X11-unix
@@ -17,6 +18,9 @@ services:
       - JWT_EXP_DELTA_SECONDS=${JWT_EXP_DELTA_SECONDS}
     ports: 
       - "${API_GATEWAY_PORT}:${API_GATEWAY_PORT}"
+    # מיפוי יציאת COM3 במחשב Windows לנתיב /dev/ttyS3 בתוך הקונטיינר
+    devices:
+      - "/dev/ttyS3:/dev/ttyS3"
     command: /bin/sh -c "python main.py"
 
   business_logic:
